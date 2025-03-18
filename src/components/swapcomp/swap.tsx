@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { ArrowDownUp } from "lucide-react";
 import { NETWORKS, SLIPPAGE_OPTIONS } from "@/lib/constants";
@@ -21,11 +20,9 @@ const Swap = () => {
   const { isConnected, connect, selectedWallet, address } = useWallet();
   const { isTestnet } = useNetwork();
   
-  // State for network and tokens
   const [selectedNetwork, setSelectedNetwork] = useState(NETWORKS[0]);
   const [availableTokens, setAvailableTokens] = useState<Token[]>([]);
   
-  // State for swap parameters
   const [swapState, setSwapState] = useState<SwapState>({
     fromToken: null,
     toToken: null,
@@ -34,20 +31,17 @@ const Swap = () => {
     slippage: 0.5,
   });
   
-  // UI state
   const [isLoadingTokens, setIsLoadingTokens] = useState(false);
   const [isSwapping, setIsSwapping] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [txStatus, setTxStatus] = useState<'pending' | 'success' | 'error' | null>(null);
   const [isPairSupported, setIsPairSupported] = useState(true);
   
-  // Transaction history state
   const [transactions, setTransactions] = useState<Transaction[]>(() => {
     const savedTxs = localStorage.getItem('swapTransactions');
     return savedTxs ? JSON.parse(savedTxs) : [];
   });
   
-  // Load tokens when network changes or testnet toggle changes
   useEffect(() => {
     const loadTokens = async () => {
       setIsLoadingTokens(true);
@@ -57,7 +51,6 @@ const Swap = () => {
         console.log(`Loaded ${tokens.length} tokens`);
         setAvailableTokens(tokens);
         
-        // Reset token selection if network changes
         setSwapState(prev => ({
           ...prev,
           fromToken: null,
@@ -78,12 +71,10 @@ const Swap = () => {
     loadTokens();
   }, [selectedNetwork, isTestnet]);
   
-  // Save transactions to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('swapTransactions', JSON.stringify(transactions));
   }, [transactions]);
   
-  // Get quote when parameters change
   useEffect(() => {
     const getQuote = async () => {
       if (swapState.fromToken && swapState.toToken && swapState.fromAmount && parseFloat(swapState.fromAmount) > 0) {
@@ -105,23 +96,19 @@ const Swap = () => {
           console.log(`Calculated output amount: ${calculatedAmount}`);
           setSwapState(prev => ({ ...prev, toAmount: calculatedAmount }));
           
-          // We always assume the pair is supported since we have fallback mechanisms
           setIsPairSupported(true);
         } catch (error) {
           console.error("Error getting swap quote:", error);
           
-          // Check if the error is specifically about pair not being supported
           const errorMsg = (error as Error).message || '';
           if (errorMsg.includes('not supported')) {
             setIsPairSupported(false);
             toast.error("This token pair is not supported for swapping");
           } else {
-            // For other errors, show a toast but still allow the swap (will use fallback)
             toast.error(`Quote error: ${errorMsg}`);
             setIsPairSupported(true);
           }
           
-          // Still try to provide a fallback calculation
           if (swapState.fromToken.price && swapState.toToken.price) {
             const fromPrice = swapState.fromToken.price || 1;
             const toPrice = swapState.toToken.price || 1;
@@ -144,7 +131,6 @@ const Swap = () => {
     getQuote();
   }, [swapState.fromToken, swapState.toToken, swapState.fromAmount, address, isTestnet]);
   
-  // Handle swap action
   const handleSwap = async () => {
     if (!swapState.fromToken || !swapState.toToken || !swapState.fromAmount) {
       toast.error("Please select tokens and enter an amount to swap");
@@ -160,7 +146,6 @@ const Swap = () => {
     setTxStatus('pending');
     
     try {
-      // Create a transaction record with pending status
       const txId = Date.now().toString();
       const newTx: Transaction = {
         id: txId,
@@ -191,14 +176,13 @@ const Swap = () => {
       if (success) {
         setTxStatus('success');
         
-        // Update transaction status and add explorer URL - fixed line using optional chaining
         setTransactions(prev => 
           prev.map(tx => 
             tx.id === txId 
               ? { 
                   ...tx, 
                   status: 'success',
-                  blockExplorerUrl: selectedNetwork.blockExplorer 
+                  blockExplorerUrl: selectedNetwork?.blockExplorer 
                     ? `https://${isTestnet ? 'testnet.' : ''}${selectedNetwork.blockExplorer}/tx/${success}` 
                     : undefined
                 } 
@@ -206,7 +190,6 @@ const Swap = () => {
           )
         );
         
-        // Reset form after successful swap with a delay
         setTimeout(() => {
           setSwapState(prev => ({
             ...prev,
@@ -218,7 +201,6 @@ const Swap = () => {
       } else {
         setTxStatus('error');
         
-        // Update transaction status to failed
         setTransactions(prev => 
           prev.map(tx => 
             tx.id === txId ? { ...tx, status: 'failed' } : tx
@@ -233,7 +215,6 @@ const Swap = () => {
       console.error("Swap error:", error);
       setTxStatus('error');
       
-      // Update the most recent transaction to failed
       setTransactions(prev => {
         const updated = [...prev];
         if (updated.length > 0) {
@@ -251,7 +232,6 @@ const Swap = () => {
     }
   };
   
-  // Switch tokens
   const handleSwitchTokens = () => {
     if (!swapState.fromToken || !swapState.toToken) return;
     
@@ -280,18 +260,18 @@ const Swap = () => {
                   Testnet
                 </span>
               )}
-              <span className="text-white text-xs">Slippage Fee:</span>
+              <span className="text-white text-xs whitespace-nowrap">Slippage Fee:</span>
               <Popover open={showSettings} onOpenChange={setShowSettings}>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
                     size="sm"
-                    className="settings-button bg-black/20 border-unikron-blue/20 text-white"
+                    className="settings-button bg-black/20 border-unikron-blue/20 text-white h-8 px-3"
                   >
-                    <span className="text-xs">{swapState.slippage}%</span>
+                    <span className="text-xs font-medium">{swapState.slippage}%</span>
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-80 p-0 bg-black/90 border-unikron-blue/20">
+                <PopoverContent className="w-80 p-0 bg-black/60 border-unikron-blue/20">
                   <SlippageComponent
                     slippage={swapState.slippage}
                     setSlippage={(value) => setSwapState(prev => ({ ...prev, slippage: value }))}
@@ -354,7 +334,6 @@ const Swap = () => {
               className="w-full py-6 text-lg font-medium"
               disabled={!swapState.fromToken || !swapState.toToken || !swapState.fromAmount || isSwapping}
               onClick={isConnected ? handleSwap : () => {
-                // Show wallet dialog if not connected
                 if (selectedWallet) {
                   connect(selectedWallet);
                 } else {
@@ -379,7 +358,6 @@ const Swap = () => {
   );
 };
 
-// Import ethers for blockchain interactions
 import { ethers } from 'ethers';
 
 export default Swap;
