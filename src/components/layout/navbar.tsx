@@ -2,6 +2,7 @@
 import WalletConnector from "@/components/walletconnector/WalletConnector";
 import NetworkToggle from "@/components/NetworkToggle";
 import { useIsMobile } from "@/hooks/use-mobile";
+import SidebarMenu from "@/components/layout/SidebarMenu";
 
 const Navbar = () => {
   const isMobile = useIsMobile();
@@ -17,10 +18,14 @@ const Navbar = () => {
           />
         </div>
         
-        <div className="flex items-center gap-2 sm:gap-4">
-          <NetworkToggle />
-          <WalletConnector />
-        </div>
+        {isMobile ? (
+          <SidebarMenu />
+        ) : (
+          <div className="flex items-center gap-2 sm:gap-4">
+            <NetworkToggle />
+            <WalletConnector />
+          </div>
+        )}
       </div>
     </header>
   );

@@ -270,7 +270,7 @@ const Swap = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="settings-button bg-black/20 border-unikron-blue/20 text-white h-8 px-3"
+                      className="settings-button bg-black/20 border-unikron-blue/20 text-white h-8 px-3 min-w-[60px]"
                     >
                       <span className="text-xs font-medium">{swapState.slippage}%</span>
                     </Button>
@@ -358,7 +358,9 @@ const Swap = () => {
         </CardContent>
       </Card>
       
-      <TransactionHistory transactions={transactions} />
+      <div className="w-full max-w-[480px] mx-auto">
+        <TransactionHistory transactions={transactions} />
+      </div>
     </div>
   );
 };
