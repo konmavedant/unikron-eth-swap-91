@@ -8,13 +8,13 @@ const Navbar = () => {
   const isMobile = useIsMobile();
   
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 h-14 sm:h-20 backdrop-blur-md bg-unikron-navy-dark/70 border-b border-unikron-blue/10">
+    <header className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 h-14 sm:h-16 backdrop-blur-md bg-unikron-navy-dark/70 border-b border-unikron-blue/10">
       <div className="max-w-7xl mx-auto h-full flex items-center justify-between">
         <div className="flex items-center">
           <img 
             src="/lovable-uploads/f7bf7061-1d66-4b9a-8b8a-c02479456db5.png"
             alt="UNIKRON"
-            className={`${isMobile ? 'h-4' : 'h-6'}`} 
+            className="h-4 sm:h-5" 
           />
         </div>
         

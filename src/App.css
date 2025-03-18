@@ -2,15 +2,67 @@
 #root {
   max-width: 100%;
   margin: 0 auto;
-  padding: 0.5rem;
+  padding: 0;
   text-align: center;
 }
 
 @media (min-width: 640px) {
   #root {
     max-width: 1280px;
-    padding: 1rem;
+    padding: 0.5rem;
   }
+}
+
+/* Responsive container spacing */
+.container-fluid {
+  width: 100%;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 768px) {
+  .container-fluid {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Mobile-friendly card layouts */
+.card {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+@media (min-width: 640px) {
+  .card {
+    padding: 2em;
+  }
+}
+
+/* Make the swap component responsive */
+.swap-container {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* Adjust form controls for mobile */
+input, select, textarea, button {
+  font-size: 16px !important; /* Prevents zoom on iOS devices */
+}
+
+/* Custom styling for the wallet button in sidebar */
+.sidebar-wallet-wrapper .bg-unikron-blue {
+  background-color: #0EA5E9 !important; /* Bright blue color for the connect wallet button */
+  width: 100% !important;
+}
+
+/* RainbowKit styling override in sidebar */
+.sidebar-wallet-wrapper [data-rk] button {
+  width: 100% !important;
+  background-color: #0EA5E9 !important;
 }
 
 .logo {
@@ -39,10 +91,6 @@
   a:nth-of-type(2) .logo {
     animation: logo-spin infinite 20s linear;
   }
-}
-
-.card {
-  padding: 2em;
 }
 
 .read-the-docs {
