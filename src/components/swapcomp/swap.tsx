@@ -280,6 +280,7 @@ const Swap = () => {
                   Testnet
                 </span>
               )}
+              <span className="text-white text-xs">Slippage Fee:</span>
               <Popover open={showSettings} onOpenChange={setShowSettings}>
                 <PopoverTrigger asChild>
                   <Button
@@ -287,7 +288,7 @@ const Swap = () => {
                     size="sm"
                     className="settings-button bg-black/20 border-unikron-blue/20 text-white"
                   >
-                    <span className="text-xs">Slippage Fee: {swapState.slippage}%</span>
+                    <span className="text-xs">{swapState.slippage}%</span>
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-80 p-0 bg-black/90 border-unikron-blue/20">
