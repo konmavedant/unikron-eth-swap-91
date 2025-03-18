@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { ArrowDownUp } from "lucide-react";
 import { NETWORKS, SLIPPAGE_OPTIONS } from "@/lib/constants";
@@ -11,7 +10,6 @@ import { useWallet } from "@/context/walletContext";
 import { useNetwork } from "@/context/networkContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { fetchSymbiosisTokens } from "@/services/tokenService";
 import { swapTokens, calculateOutputAmount } from "@/lib/swap";
@@ -252,27 +250,22 @@ const Swap = () => {
       <Card className="swap-card w-full max-w-[480px] mx-auto">
         <CardContent className="p-3 sm:p-4">
           <div className="flex items-center justify-between mb-4 sm:mb-6 flex-wrap gap-2">
-            <NetworkSelector 
-              selectedNetwork={selectedNetwork} 
-              onSelectNetwork={setSelectedNetwork} 
-            />
-            
-            <div className="flex items-center gap-2">
-              {isTestnet && (
-                <span className="bg-yellow-500/20 text-yellow-300 text-xs px-2 py-1 rounded-full">
-                  Testnet
-                </span>
-              )}
+            <div className="flex items-center gap-2 flex-wrap">
+              <NetworkSelector 
+                selectedNetwork={selectedNetwork} 
+                onSelectNetwork={setSelectedNetwork} 
+              />
+              
               <div className="flex items-center">
-                <span className="text-white text-xs whitespace-nowrap mr-2">Slippage Fee:</span>
+                <span className="text-white text-xs whitespace-nowrap mr-2">Slippage:</span>
                 <Popover open={showSettings} onOpenChange={setShowSettings}>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
                       size="sm"
-                      className="settings-button bg-black/20 border-unikron-blue/20 text-white h-8 px-3 min-w-[60px]"
+                      className="settings-button bg-black/20 border-unikron-blue/20 text-white h-8 px-4 min-w-[70px]"
                     >
-                      <span className="text-xs font-medium">{swapState.slippage}%</span>
+                      <span className="text-sm font-medium">{swapState.slippage}%</span>
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-80 p-0 bg-unikron-navy-light border-unikron-blue/20">
@@ -285,6 +278,12 @@ const Swap = () => {
                 </Popover>
               </div>
             </div>
+            
+            {isTestnet && (
+              <span className="bg-yellow-500/20 text-yellow-300 text-xs px-2 py-1 rounded-full">
+                Testnet
+              </span>
+            )}
           </div>
           
           <div className="space-y-2">
@@ -368,3 +367,4 @@ const Swap = () => {
 import { ethers } from 'ethers';
 
 export default Swap;
+

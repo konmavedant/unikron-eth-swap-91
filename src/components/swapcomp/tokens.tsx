@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { ChevronDown, Search, Loader2 } from "lucide-react";
 import { Token } from "@/lib/types";
@@ -33,7 +32,7 @@ const TokenSelector = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="token-selector" asChild>
-        <button className="flex items-center gap-2 px-3 py-2 rounded-xl bg-black/20 border border-unikron-blue/10 outline-none min-w-[120px] whitespace-nowrap">
+        <button className="flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-black/20 border border-unikron-blue/10 outline-none min-w-[120px] whitespace-nowrap">
           {selectedToken ? (
             <>
               <img 
@@ -48,7 +47,7 @@ const TokenSelector = ({
               <ChevronDown className="h-4 w-4 text-white/70 flex-shrink-0" />
             </>
           ) : (
-            <span className="text-white font-medium truncate">Select Token</span>
+            <span className="text-white font-medium truncate mx-auto">Select Token</span>
           )}
         </button>
       </DropdownMenuTrigger>
@@ -83,7 +82,6 @@ const TokenSelector = ({
                   alt={token.symbol} 
                   className="h-6 w-6 rounded-full" 
                   onError={(e) => {
-                    // If image fails to load, use a fallback
                     (e.target as HTMLImageElement).src = "/tokens/unknown.svg";
                   }}
                 />

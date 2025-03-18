@@ -1,3 +1,4 @@
+
 #root {
   max-width: 100%;
   margin: 0 auto;
@@ -52,6 +53,13 @@ input, select, textarea, button {
   font-size: 16px !important; /* Prevents zoom on iOS devices */
 }
 
+/* Center the "Select token" text in token selectors */
+button.token-selector span {
+  display: block;
+  text-align: center;
+  width: 100%;
+}
+
 /* Custom styling for the wallet button in sidebar */
 .sidebar-wallet-wrapper .bg-unikron-blue {
   background-color: #0EA5E9 !important; /* Bright blue color for the connect wallet button */
@@ -69,6 +77,13 @@ input, select, textarea, button {
   background-color: #0EA5E9 !important;
   width: 100% !important;
   color: white !important;
+}
+
+/* Increase the size of the slippage button */
+.settings-button {
+  min-height: 2.25rem !important;
+  font-size: 0.875rem !important;
+  padding: 0 1rem !important;
 }
 
 .logo {
