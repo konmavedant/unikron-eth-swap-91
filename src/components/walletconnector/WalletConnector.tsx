@@ -17,12 +17,14 @@ import NotConnected from './not_connected';
 import { WalletIcon } from './walletIcons';
 import { useNetwork } from '@/context/networkContext';
 import { NETWORKS } from '@/lib/constants';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const WalletConnector = () => {
   const [open, setOpen] = useState(false);
   const { isConnected, selectedWallet, connect, disconnect, walletAddress } = useWallet();
   const { selectedNetwork } = useNetwork();
   const [filteredWallets, setFilteredWallets] = useState<WalletProvider[]>([]);
+  const isMobile = useIsMobile();
   
   // Update filtered wallets whenever the network changes
   useEffect(() => {
@@ -87,17 +89,18 @@ const WalletConnector = () => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button 
-          className="bg-unikron-blue hover:bg-unikron-blue-light text-white transition-all duration-300"
+          size={isMobile ? "sm" : "default"}
+          className="bg-unikron-blue hover:bg-unikron-blue-light text-white transition-all duration-300 px-2 sm:px-4 py-1 sm:py-2 h-8 sm:h-10 text-xs sm:text-sm"
         >
           {isConnected ? (
             <div className="flex items-center">
-              <WalletIcon wallet={selectedWallet} className="mr-2 h-4 w-4" />
+              <WalletIcon wallet={selectedWallet} className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
               {walletAddress ? formatAddress(walletAddress) : selectedWallet?.name || "Connected"}
             </div>
           ) : (
             <>
-              <Wallet className="mr-2 h-4 w-4" />
-              Connect Wallet
+              <Wallet className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+              {isMobile ? "Connect" : "Connect Wallet"}
             </>
           )}
         </Button>

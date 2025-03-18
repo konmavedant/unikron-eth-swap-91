@@ -79,6 +79,20 @@ button.token-selector span {
   color: white !important;
 }
 
+/* Mobile wallet button sizing */
+@media (max-width: 640px) {
+  [data-rk] button {
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.75rem !important;
+  }
+  
+  .wallet-button-mobile {
+    padding: 0.25rem 0.5rem !important;
+    height: 2rem !important;
+    font-size: 0.75rem !important;
+  }
+}
+
 /* Increase the size of the slippage button */
 .settings-button {
   min-height: 2.25rem !important;
