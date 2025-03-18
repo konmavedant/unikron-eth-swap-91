@@ -191,14 +191,16 @@ const Swap = () => {
       if (success) {
         setTxStatus('success');
         
-        // Update transaction status and add explorer URL
+        // Update transaction status and add explorer URL - fixed line using optional chaining
         setTransactions(prev => 
           prev.map(tx => 
             tx.id === txId 
               ? { 
                   ...tx, 
                   status: 'success',
-                  blockExplorerUrl: `https://${isTestnet ? 'testnet.' : ''}${selectedNetwork.blockExplorer}/tx/${success}`
+                  blockExplorerUrl: selectedNetwork.blockExplorer 
+                    ? `https://${isTestnet ? 'testnet.' : ''}${selectedNetwork.blockExplorer}/tx/${success}` 
+                    : undefined
                 } 
               : tx
           )

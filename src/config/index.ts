@@ -33,31 +33,36 @@ export const NETWORKS: Network[] = [
     id: "ethereum",
     name: "Ethereum",
     icon: "/logos/ethereum.svg",
-    chainId: 1
+    chainId: 1,
+    blockExplorer: "etherscan.io"
   },
   {
     id: "bitcoin",
     name: "Bitcoin",
     icon: "/tokens/btc.svg",  // Note: We'll need to add this asset
-    chainId: 9000  // Using a custom chainId for Bitcoin
+    chainId: 9000,  // Using a custom chainId for Bitcoin
+    blockExplorer: "blockstream.info"
   },
   {
     id: "ton",
     name: "TON",
     icon: "/tokens/ton.svg",  // Note: We'll need to add this asset
-    chainId: 9010  // Using a custom chainId for TON
+    chainId: 9010,  // Using a custom chainId for TON
+    blockExplorer: "tonscan.org"
   },
   {
     id: "cardano",
     name: "Cardano",
     icon: "/logos/cardano.svg",
-    chainId: 2000
+    chainId: 2000,
+    blockExplorer: "cardanoscan.io"
   },
   {
     id: "arbitrum",
     name: "Arbitrum",
     icon: "/logos/arbitrum.svg",
-    chainId: 42161
+    chainId: 42161,
+    blockExplorer: "arbiscan.io"
   }
 ];
 

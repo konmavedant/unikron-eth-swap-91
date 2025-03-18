@@ -1,4 +1,3 @@
-
 // Token represents a cryptocurrency token
 export interface Token {
   id?: string;
@@ -20,6 +19,7 @@ export interface Network {
   name: string;
   icon: string;
   chainId?: number;
+  blockExplorer?: string;
 }
 
 // SwapState represents the state of a swap operation

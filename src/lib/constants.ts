@@ -6,19 +6,22 @@ export const NETWORKS: Network[] = [
     id: "ethereum",
     name: "Ethereum",
     icon: "/logos/ethereum.svg",
-    chainId: 1
+    chainId: 1,
+    blockExplorer: "etherscan.io"
   },
   {
     id: "cardano",
     name: "Cardano",
     icon: "/logos/cardano.svg",
-    chainId: 2000
+    chainId: 2000,
+    blockExplorer: "cardanoscan.io"
   },
   {
     id: "arbitrum",
     name: "Arbitrum",
     icon: "/logos/arbitrum.svg",
-    chainId: 42161
+    chainId: 42161,
+    blockExplorer: "arbiscan.io"
   }
 ];
 

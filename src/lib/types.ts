@@ -18,6 +18,7 @@ export interface Network {
   name: string;
   icon: string;
   chainId?: number;
+  blockExplorer?: string;
 }
 
 export interface SwapState {
