@@ -28,7 +28,7 @@ const Index = () => {
           
           {/* Main content */}
           <main className="pt-28 pb-12 px-4 sm:px-6 flex flex-col items-center justify-center relative z-10">
-            <div className="max-w-md w-full mx-auto">
+            <div className="max-w-md w-full mx-auto mb-16">
               <Swap />
             </div>
           </main>

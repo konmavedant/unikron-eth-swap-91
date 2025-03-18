@@ -1,16 +1,18 @@
 
 import { useState, useEffect } from "react";
-import { ArrowDownUp, Settings } from "lucide-react";
+import { ArrowDownUp } from "lucide-react";
 import { NETWORKS, SLIPPAGE_OPTIONS } from "@/lib/constants";
 import { Network, Token, SwapState } from "@/lib/types";
 import NetworkSelector from "@/components/NetworkSelector";
 import SwapInput from "@/components/swapcomp/swapInput";
 import SlippageComponent from "@/components/swapcomp/slippage_component";
+import TransactionHistory, { Transaction } from "@/components/swapcomp/TransactionHistory";
 import { useWallet } from "@/context/walletContext";
 import { useNetwork } from "@/context/networkContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { fetchSymbiosisTokens } from "@/services/tokenService";
 import { swapTokens, calculateOutputAmount } from "@/lib/swap";
 import { toast } from "sonner";
@@ -38,6 +40,12 @@ const Swap = () => {
   const [showSettings, setShowSettings] = useState(false);
   const [txStatus, setTxStatus] = useState<'pending' | 'success' | 'error' | null>(null);
   const [isPairSupported, setIsPairSupported] = useState(true);
+  
+  // Transaction history state
+  const [transactions, setTransactions] = useState<Transaction[]>(() => {
+    const savedTxs = localStorage.getItem('swapTransactions');
+    return savedTxs ? JSON.parse(savedTxs) : [];
+  });
   
   // Load tokens when network changes or testnet toggle changes
   useEffect(() => {
@@ -69,6 +77,11 @@ const Swap = () => {
     
     loadTokens();
   }, [selectedNetwork, isTestnet]);
+  
+  // Save transactions to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('swapTransactions', JSON.stringify(transactions));
+  }, [transactions]);
   
   // Get quote when parameters change
   useEffect(() => {
@@ -147,6 +160,25 @@ const Swap = () => {
     setTxStatus('pending');
     
     try {
+      // Create a transaction record with pending status
+      const txId = Date.now().toString();
+      const newTx: Transaction = {
+        id: txId,
+        timestamp: Date.now(),
+        fromToken: {
+          symbol: swapState.fromToken.symbol,
+          amount: swapState.fromAmount
+        },
+        toToken: {
+          symbol: swapState.toToken.symbol,
+          amount: swapState.toAmount
+        },
+        status: 'pending',
+        network: selectedNetwork.name + (isTestnet ? ' Testnet' : ' Mainnet'),
+      };
+      
+      setTransactions(prev => [newTx, ...prev]);
+      
       const success = await swapTokens(
         swapState.fromToken,
         swapState.toToken,
@@ -158,6 +190,20 @@ const Swap = () => {
       
       if (success) {
         setTxStatus('success');
+        
+        // Update transaction status and add explorer URL
+        setTransactions(prev => 
+          prev.map(tx => 
+            tx.id === txId 
+              ? { 
+                  ...tx, 
+                  status: 'success',
+                  blockExplorerUrl: `https://${isTestnet ? 'testnet.' : ''}${selectedNetwork.blockExplorer}/tx/${success}`
+                } 
+              : tx
+          )
+        );
+        
         // Reset form after successful swap with a delay
         setTimeout(() => {
           setSwapState(prev => ({
@@ -169,6 +215,14 @@ const Swap = () => {
         }, 5000);
       } else {
         setTxStatus('error');
+        
+        // Update transaction status to failed
+        setTransactions(prev => 
+          prev.map(tx => 
+            tx.id === txId ? { ...tx, status: 'failed' } : tx
+          )
+        );
+        
         setTimeout(() => {
           setTxStatus(null);
         }, 5000);
@@ -176,6 +230,16 @@ const Swap = () => {
     } catch (error) {
       console.error("Swap error:", error);
       setTxStatus('error');
+      
+      // Update the most recent transaction to failed
+      setTransactions(prev => {
+        const updated = [...prev];
+        if (updated.length > 0) {
+          updated[0] = { ...updated[0], status: 'failed' };
+        }
+        return updated;
+      });
+      
       toast.error(`Swap failed: ${(error as Error).message}`);
       setTimeout(() => {
         setTxStatus(null);
@@ -199,112 +263,116 @@ const Swap = () => {
   };
   
   return (
-    <Card className="swap-card w-full max-w-[480px] mx-auto">
-      <CardContent className="p-4">
-        <div className="flex items-center justify-between mb-6">
-          <NetworkSelector 
-            selectedNetwork={selectedNetwork} 
-            onSelectNetwork={setSelectedNetwork} 
-          />
-          
-          <div className="flex items-center gap-2">
-            {isTestnet && (
-              <span className="bg-yellow-500/20 text-yellow-300 text-xs px-2 py-1 rounded-full">
-                Testnet
-              </span>
-            )}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="settings-button"
-              onClick={() => setShowSettings(!showSettings)}
-            >
-              <Settings className="h-4 w-4 text-white/70" />
-            </Button>
+    <div className="space-y-4">
+      <Card className="swap-card w-full max-w-[480px] mx-auto">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between mb-6">
+            <NetworkSelector 
+              selectedNetwork={selectedNetwork} 
+              onSelectNetwork={setSelectedNetwork} 
+            />
+            
+            <div className="flex items-center gap-2">
+              {isTestnet && (
+                <span className="bg-yellow-500/20 text-yellow-300 text-xs px-2 py-1 rounded-full">
+                  Testnet
+                </span>
+              )}
+              <Popover open={showSettings} onOpenChange={setShowSettings}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="settings-button bg-black/20 border-unikron-blue/20 text-white"
+                  >
+                    <span className="text-xs">Slippage Fee: {swapState.slippage}%</span>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80 p-0 bg-black/90 border-unikron-blue/20">
+                  <SlippageComponent
+                    slippage={swapState.slippage}
+                    setSlippage={(value) => setSwapState(prev => ({ ...prev, slippage: value }))}
+                    slippageOptions={SLIPPAGE_OPTIONS}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
           </div>
-        </div>
-        
-        {showSettings && (
-          <div className="bg-black/10 rounded-xl p-4 mb-6">
-            <SlippageComponent
-              slippage={swapState.slippage}
-              setSlippage={(value) => setSwapState(prev => ({ ...prev, slippage: value }))}
-              slippageOptions={SLIPPAGE_OPTIONS}
+          
+          <div className="space-y-2">
+            <SwapInput
+              label="From"
+              selectedToken={swapState.fromToken}
+              onSelectToken={(token) => 
+                setSwapState(prev => ({ ...prev, fromToken: token }))
+              }
+              amount={swapState.fromAmount}
+              onAmountChange={(amount) => 
+                setSwapState(prev => ({ ...prev, fromAmount: amount }))
+              }
+              availableTokens={availableTokens}
+              isLoading={isLoadingTokens}
+            />
+            
+            <div className="flex justify-center -my-3 relative z-10">
+              <button 
+                onClick={handleSwitchTokens}
+                className="swap-connector"
+                disabled={!swapState.fromToken || !swapState.toToken}
+              >
+                <ArrowDownUp className="h-4 w-4" />
+              </button>
+            </div>
+            
+            <SwapInput
+              label="To"
+              selectedToken={swapState.toToken}
+              onSelectToken={(token) => 
+                setSwapState(prev => ({ ...prev, toToken: token }))
+              }
+              amount={swapState.toAmount}
+              onAmountChange={(amount) => 
+                setSwapState(prev => ({ ...prev, toAmount: amount }))
+              }
+              availableTokens={availableTokens}
+              isLoading={isLoadingTokens}
+              isReadOnly={true}
             />
           </div>
-        )}
-        
-        <div className="space-y-2">
-          <SwapInput
-            label="From"
-            selectedToken={swapState.fromToken}
-            onSelectToken={(token) => 
-              setSwapState(prev => ({ ...prev, fromToken: token }))
-            }
-            amount={swapState.fromAmount}
-            onAmountChange={(amount) => 
-              setSwapState(prev => ({ ...prev, fromAmount: amount }))
-            }
-            availableTokens={availableTokens}
-            isLoading={isLoadingTokens}
-          />
           
-          <div className="flex justify-center -my-3 relative z-10">
-            <button 
-              onClick={handleSwitchTokens}
-              className="swap-connector"
-              disabled={!swapState.fromToken || !swapState.toToken}
+          {!isPairSupported && swapState.fromToken && swapState.toToken && (
+            <div className="mt-4 p-2 bg-yellow-500/10 border border-yellow-500/20 rounded-md text-yellow-300 text-sm">
+              This token pair may not be supported for swapping via Symbiosis, but we'll try a fallback method.
+            </div>
+          )}
+          
+          <div className="mt-6">
+            <Button 
+              className="w-full py-6 text-lg font-medium"
+              disabled={!swapState.fromToken || !swapState.toToken || !swapState.fromAmount || isSwapping}
+              onClick={isConnected ? handleSwap : () => {
+                // Show wallet dialog if not connected
+                if (selectedWallet) {
+                  connect(selectedWallet);
+                } else {
+                  toast.info("Please connect a wallet first");
+                }
+              }}
             >
-              <ArrowDownUp className="h-4 w-4" />
-            </button>
+              {!isConnected 
+                ? "Connect Wallet" 
+                : isSwapping 
+                  ? "Swapping..." 
+                  : txStatus === 'success' 
+                    ? "Swap Successful" 
+                    : "Swap"}
+            </Button>
           </div>
-          
-          <SwapInput
-            label="To"
-            selectedToken={swapState.toToken}
-            onSelectToken={(token) => 
-              setSwapState(prev => ({ ...prev, toToken: token }))
-            }
-            amount={swapState.toAmount}
-            onAmountChange={(amount) => 
-              setSwapState(prev => ({ ...prev, toAmount: amount }))
-            }
-            availableTokens={availableTokens}
-            isLoading={isLoadingTokens}
-            isReadOnly={true}
-          />
-        </div>
-        
-        {!isPairSupported && swapState.fromToken && swapState.toToken && (
-          <div className="mt-4 p-2 bg-yellow-500/10 border border-yellow-500/20 rounded-md text-yellow-300 text-sm">
-            This token pair may not be supported for swapping via Symbiosis, but we'll try a fallback method.
-          </div>
-        )}
-        
-        <div className="mt-6">
-          <Button 
-            className="w-full py-6 text-lg font-medium"
-            disabled={!swapState.fromToken || !swapState.toToken || !swapState.fromAmount || isSwapping}
-            onClick={isConnected ? handleSwap : () => {
-              // Show wallet dialog if not connected
-              if (selectedWallet) {
-                connect(selectedWallet);
-              } else {
-                toast.info("Please connect a wallet first");
-              }
-            }}
-          >
-            {!isConnected 
-              ? "Connect Wallet" 
-              : isSwapping 
-                ? "Swapping..." 
-                : txStatus === 'success' 
-                  ? "Swap Successful" 
-                  : "Swap"}
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+      
+      <TransactionHistory transactions={transactions} />
+    </div>
   );
 };
 

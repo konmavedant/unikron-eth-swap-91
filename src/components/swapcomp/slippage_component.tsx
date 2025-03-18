@@ -41,9 +41,9 @@ const SlippageComponent = ({
   };
 
   return (
-    <div className="space-y-3">
+    <div className="p-4 space-y-3">
       <div>
-        <Label htmlFor="slippage" className="text-white">Slippage Tolerance</Label>
+        <Label htmlFor="slippage" className="text-white text-sm">Slippage Tolerance</Label>
         <div className="text-xs text-white/60 mt-1">
           Your transaction will revert if the price changes unfavorably by more than this percentage.
         </div>
@@ -54,6 +54,7 @@ const SlippageComponent = ({
           <Button
             key={option}
             variant={!isCustom && slippage === option ? "default" : "outline"}
+            size="sm"
             className={!isCustom && slippage === option ? "bg-unikron-blue" : "bg-black/20 border-unikron-blue/20 text-white"}
             onClick={() => handlePresetSelection(option)}
           >
@@ -68,7 +69,7 @@ const SlippageComponent = ({
             onChange={handleCustomInputChange}
             onFocus={handleCustomFocus}
             placeholder="Custom"
-            className={`bg-black/20 border-unikron-blue/20 text-white ${isCustom ? 'border-unikron-blue' : ''}`}
+            className={`bg-black/20 border-unikron-blue/20 text-white h-9 ${isCustom ? 'border-unikron-blue' : ''}`}
           />
           <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/60">%</span>
         </div>
