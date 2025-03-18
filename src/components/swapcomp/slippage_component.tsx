@@ -41,7 +41,7 @@ const SlippageComponent = ({
   };
 
   return (
-    <div className="p-4 space-y-3">
+    <div className="p-4 space-y-3 bg-unikron-navy-light">
       <div>
         <Label htmlFor="slippage" className="text-white text-sm">Slippage Tolerance</Label>
         <div className="text-xs text-white/60 mt-1">

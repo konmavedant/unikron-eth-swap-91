@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { ArrowDownUp } from "lucide-react";
 import { NETWORKS, SLIPPAGE_OPTIONS } from "@/lib/constants";
@@ -15,10 +16,12 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { fetchSymbiosisTokens } from "@/services/tokenService";
 import { swapTokens, calculateOutputAmount } from "@/lib/swap";
 import { toast } from "sonner";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Swap = () => {
   const { isConnected, connect, selectedWallet, address } = useWallet();
   const { isTestnet } = useNetwork();
+  const isMobile = useIsMobile();
   
   const [selectedNetwork, setSelectedNetwork] = useState(NETWORKS[0]);
   const [availableTokens, setAvailableTokens] = useState<Token[]>([]);
@@ -245,10 +248,10 @@ const Swap = () => {
   };
   
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 px-2 sm:px-0">
       <Card className="swap-card w-full max-w-[480px] mx-auto">
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between mb-6">
+        <CardContent className="p-3 sm:p-4">
+          <div className="flex items-center justify-between mb-4 sm:mb-6 flex-wrap gap-2">
             <NetworkSelector 
               selectedNetwork={selectedNetwork} 
               onSelectNetwork={setSelectedNetwork} 
@@ -260,25 +263,27 @@ const Swap = () => {
                   Testnet
                 </span>
               )}
-              <span className="text-white text-xs whitespace-nowrap">Slippage Fee:</span>
-              <Popover open={showSettings} onOpenChange={setShowSettings}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="settings-button bg-black/20 border-unikron-blue/20 text-white h-8 px-3"
-                  >
-                    <span className="text-xs font-medium">{swapState.slippage}%</span>
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-80 p-0 bg-black/60 border-unikron-blue/20">
-                  <SlippageComponent
-                    slippage={swapState.slippage}
-                    setSlippage={(value) => setSwapState(prev => ({ ...prev, slippage: value }))}
-                    slippageOptions={SLIPPAGE_OPTIONS}
-                  />
-                </PopoverContent>
-              </Popover>
+              <div className="flex items-center">
+                <span className="text-white text-xs whitespace-nowrap mr-2">Slippage Fee:</span>
+                <Popover open={showSettings} onOpenChange={setShowSettings}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="settings-button bg-black/20 border-unikron-blue/20 text-white h-8 px-3"
+                    >
+                      <span className="text-xs font-medium">{swapState.slippage}%</span>
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-80 p-0 bg-unikron-navy-light border-unikron-blue/20">
+                    <SlippageComponent
+                      slippage={swapState.slippage}
+                      setSlippage={(value) => setSwapState(prev => ({ ...prev, slippage: value }))}
+                      slippageOptions={SLIPPAGE_OPTIONS}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
             </div>
           </div>
           
@@ -331,7 +336,7 @@ const Swap = () => {
           
           <div className="mt-6">
             <Button 
-              className="w-full py-6 text-lg font-medium"
+              className="w-full py-5 sm:py-6 text-base sm:text-lg font-medium"
               disabled={!swapState.fromToken || !swapState.toToken || !swapState.fromAmount || isSwapping}
               onClick={isConnected ? handleSwap : () => {
                 if (selectedWallet) {

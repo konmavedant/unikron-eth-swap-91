@@ -116,7 +116,7 @@
   }
 
   .swap-input {
-    @apply bg-transparent text-4xl font-medium focus:outline-none w-full;
+    @apply bg-transparent text-2xl sm:text-4xl font-medium focus:outline-none w-full;
   }
   
   .swap-connector {
@@ -124,7 +124,7 @@
   }
   
   .token-selector {
-    @apply flex items-center gap-2 px-3 py-2 rounded-xl cursor-pointer transition-all duration-300;
+    @apply flex items-center gap-2 px-2 sm:px-3 py-1 sm:py-2 rounded-xl cursor-pointer transition-all duration-300 text-sm sm:text-base;
   }
 
   .dark .token-selector {
@@ -136,7 +136,7 @@
   }
   
   .network-selector {
-    @apply flex items-center gap-2 px-4 py-2 rounded-xl cursor-pointer transition-all duration-300;
+    @apply flex items-center gap-2 px-2 sm:px-4 py-1 sm:py-2 rounded-xl cursor-pointer transition-all duration-300 text-sm sm:text-base;
   }
 
   .dark .network-selector {
@@ -148,7 +148,7 @@
   }
   
   .connect-button {
-    @apply bg-unikron-blue hover:bg-unikron-blue-light text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2;
+    @apply bg-unikron-blue hover:bg-unikron-blue-light text-white font-medium py-2 sm:py-3 px-4 sm:px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2;
   }
   
   .settings-button {
@@ -193,4 +193,19 @@
   width: 100%;
   margin: 0 auto;
   text-align: center;
+}
+
+/* Mobile-specific adjustments */
+@media (max-width: 640px) {
+  .swap-card {
+    @apply mx-2 rounded-xl;
+  }
+  
+  body {
+    @apply p-0;
+  }
+  
+  #root {
+    @apply px-2 py-4;
+  }
 }
