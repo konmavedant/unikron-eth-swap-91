@@ -49,29 +49,29 @@ const SlippageComponent = ({
         </div>
       </div>
       
-      <div className="flex flex-wrap gap-2">
+      <div className="grid grid-cols-2 sm:flex flex-wrap gap-2">
         {slippageOptions.map((option) => (
           <Button
             key={option}
             variant={!isCustom && slippage === option ? "default" : "outline"}
             size="sm"
-            className={!isCustom && slippage === option ? "bg-unikron-blue" : "bg-black/20 border-unikron-blue/20 text-white"}
+            className={`${!isCustom && slippage === option ? "bg-unikron-blue" : "bg-black/20 border-unikron-blue/20 text-white"} text-xs sm:text-sm py-1 px-2 h-auto`}
             onClick={() => handlePresetSelection(option)}
           >
             {option}%
           </Button>
         ))}
         
-        <div className="relative min-w-20">
+        <div className="relative min-w-20 col-span-2 sm:col-span-1 mt-1 sm:mt-0">
           <Input
             id="custom-slippage"
             value={isCustom ? customSlippage : ""}
             onChange={handleCustomInputChange}
             onFocus={handleCustomFocus}
             placeholder="Custom"
-            className={`bg-black/20 border-unikron-blue/20 text-white h-9 ${isCustom ? 'border-unikron-blue' : ''}`}
+            className={`bg-black/20 border-unikron-blue/20 text-white h-8 text-xs sm:text-sm ${isCustom ? 'border-unikron-blue' : ''}`}
           />
-          <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/60">%</span>
+          <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/60 text-xs sm:text-sm">%</span>
         </div>
       </div>
       
